@@ -4,7 +4,8 @@
 * to display the WhatsApp box.
 */
 class GWAA_Display {
-	
+	private $fields = array();
+    private $names = array();
 	public function __construct () {
 		add_action('wpcf7_init', array($this, 'GWAA_cf7_autocomplete_add_tag_generator'));
 		add_action( 'admin_init', array($this, 'GWAA_add_products_tag_generator_menu'));
