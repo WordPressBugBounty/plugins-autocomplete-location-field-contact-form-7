@@ -1,5 +1,5 @@
 === Autocomplete Location field Contact Form 7 ===
-Tested up to: 6.3
+Tested up to: 6.6.2
 Tags: Address AutoComplete ,google address, AutoComplete, Auto Complete Contact form 7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
