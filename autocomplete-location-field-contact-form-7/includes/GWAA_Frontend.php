@@ -24,7 +24,7 @@ class GWAA_Frontend {
 		
 	?>
 <script>
-window.onload = function initialize_gpa() {
+function initialize_gpa() {
 	
 
 	var optionsc = {
@@ -137,6 +137,7 @@ function ApplyAutoComplete(input,optionsc) {
 			}
 		});
 }
+window.addEventListener('load', initialize_gpa);
 </script>
 	<?php 
 				

@@ -73,9 +73,11 @@ class GWAA_Display {
         ob_start();
         ?>
       
-        <div class="wpcf7-form-control-wrap <?php echo sanitize_html_class( $tag->name )?>">
-        	<input <?php echo $atts;?> />
-        	<?php echo $validation_error;?>
+        <div class="wpcf7-form-control-wrap-main <?php echo sanitize_html_class( $tag->name )?>">
+        	<span class="wpcf7-form-control-wrap" data-name="<?php echo $tag->name;?>">
+	        	<input <?php echo $atts;?> />
+	        	<?php echo $validation_error;?>
+	        </span>
         	<?php
         	if (in_array("street_number", $gwaa_address_option)) {
         	?>
@@ -136,9 +138,7 @@ class GWAA_Display {
 		    <?php 
 		 	}
 		 	if ($gwaa_enable_map==true) {
-		 		
-		 	
-		    ?>
+		 	?>
 		    <div class="full-field">
 		    	<div id="<?php echo $tag->name;?>map" class="gwaa_map"></div>
 		    </div>
@@ -153,18 +153,16 @@ class GWAA_Display {
 	public function GWAA_add_products_tag_generator_menu()
 	{
 		$tag_generator = WPCF7_TagGenerator::get_instance();
-		$tag_generator->add( 'gmautocomplete', __( 'Field Autocomplete', 'gwaa' ),array($this, 'GWAA_wpcf7_tag_products_generator_menu') );
+		$tag_generator->add( 'gmautocomplete', __( 'Field Autocomplete', 'gwaa' ),array($this, 'GWAA_wpcf7_tag_products_generator_menu') ,array('version'=>2));
 	}
 	function GWAA_wpcf7_tag_products_generator_menu( $contact_form, $args = '' ) {
 		$args = wp_parse_args( $args, array() );
 		$type = 'gmautocomplete';
-		$description = __( "Generate a form-tag for a WooCommerce Products drop-down menu. For more details, see %s.", 'contact-form-7' );
 	 	$gwaa_cf7_geo_api_key = get_option('gwaa_cf7_geo_api_key','');
 		?>        
-		  
-		<div class="control-box">
-			<fieldset>
-				<legend><?php echo esc_html( $description ) ; ?></legend>
+		<header class="description-box">
+			<h3>gmautocomplete form tag generator</h3>
+			<p>
 			<?php
 			if($gwaa_cf7_geo_api_key==''){
 			?>
@@ -172,44 +170,40 @@ class GWAA_Display {
 			<?php
 			}
 			?>
-				<table class="form-table">
-					<tbody>
-						<tr>
-							<th scope="row"><?php echo esc_html( __( 'Field type', 'contact-form-7' ) ); ?></th>
-							<td>
-								<fieldset>
-									<legend class="screen-reader-text"><?php echo esc_html( __( 'Field type', 'contact-form-7' ) ); ?></legend>
-									<label><input type="checkbox" name="required" /> <?php echo esc_html( __( 'Required field', 'contact-form-7' ) ); ?></label>
-								</fieldset>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-name' ); ?>"><?php echo esc_html( __( 'Name', 'contact-form-7' ) ); ?></label></th>
-							<td><input type="text" name="name" class="tg-name oneline" id="<?php echo esc_attr( $args['content'] . '-name' ); ?>" /></td>
-						</tr>
-
-						
-						
-						<tr>
-							<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-id' ); ?>"><?php echo esc_html( __( 'Id attribute', 'contact-form-7' ) ); ?></label></th>
-							<td><input type="text" name="id" class="idvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-id' ); ?>" /></td>
-						</tr>
-						<tr>
-							<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-class' ); ?>"><?php echo esc_html( __( 'Class attribute', 'contact-form-7' ) ); ?></label></th>
-							<td><input type="text" name="class" class="classvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-class' ); ?>" /></td>
-						</tr>
-						
-					</tbody>
-				</table>
+			</p>
+		</header> 
+		<div class="control-box">
+			<fieldset>
+				<legend><?php echo esc_html( __( 'Field type', 'contact-form-7' ) ); ?></legend>
+				<input type="hidden" data-tag-part="basetype" value="gmautocomplete" >
+				<label>
+				<input type="checkbox" data-tag-part="type-suffix" value="*">This is a required field.
+				</label>
+			</fieldset>
+			<fieldset>
+				<legend>Name</legend>
+				<input type="text" data-tag-part="name" pattern="[A-Za-z][A-Za-z0-9_\-]*">
+			</fieldset>
+			<fieldset>
+				<legend>Id</legend>
+				<input type="text" data-tag-part="option" data-tag-option="id:" pattern="[A-Za-z][A-Za-z0-9_\-]*">
+			</fieldset>
+			<fieldset>
+				<legend>Class</legend>
+				<input type="text" data-tag-part="option" data-tag-option="class:" pattern="[A-Za-z0-9_\-\s]*" >
 			</fieldset>
 		</div>
 		<div class="insert-box">
-			<input type="text" name="<?php echo $type; ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
-			<div class="submitbox">
-				<input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr( __( 'Insert Tag', 'contact-form-7' ) ); ?>" />
-			</div>
-			<br class="clear" />
-			<p class="description mail-tag"><label for="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>"><?php echo sprintf( esc_html( __( "To use the value input through this field in a mail field, you need to insert the corresponding mail-tag (%s) into the field on the Mail tab.", 'contact-form-7' ) ), '<strong><span class="mail-tag"></span></strong>' ); ?><input type="text" class="mail-tag code hidden" readonly="readonly" id="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>" /></label></p>
+			<div class="flex-container">
+				<input type="text" class="code" readonly="readonly" onfocus="this.select();" data-tag-part="tag">
+				<div class="submitbox">
+					<input type="button" class="button button-primary insert-tag" value="Insert Tag" />
+				</div>
+	    	</div/>
+			<p class="mail-tag-tip">
+				<label for="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>"><?php echo sprintf( esc_html( __( "To use the value input through this field in a mail field, you need to insert the corresponding mail-tag (%s) into the field on the Mail tab.", 'calculation-for-contact-form-7' ) ), '<strong><span class="mail-tag"></span></strong>' ); ?>
+			    </label>
+			</p>
 		</div>
 		<?php
 	}
@@ -228,4 +222,3 @@ class GWAA_Display {
 	
 	
 }
-?>

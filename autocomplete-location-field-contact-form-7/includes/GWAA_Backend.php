@@ -51,6 +51,7 @@ class GWAA_Backend {
 				         <td>
 				            <input type="text" class="regular-text" required="" name="gwaa_cf7_geo_api_key" id="api_key" value="<?php echo esc_attr(get_option('gwaa_cf7_geo_api_key'));?>">
 				            <p class="description">Google requires an API key to retrieve Auto Complete Address for job listings. Acquire an API key from the <a target="_blank" href="https://developers.google.com/maps/documentation/javascript/places-autocomplete">Google Maps API developer site</a>.</p>
+				            <p>Adavance Documentation <a target="_blank" href="https://www.codesmade.com/create-google-map-place-api-key/">Visit</a>.</p>
 				         </td>
 				      </tr>
 				      <tr valign="top">
@@ -198,7 +199,7 @@ class GWAA_Backend {
 	  {
 			$securee = 'http';
 	  }
-	  $api_script .= $securee.'://maps.googleapis.com/maps/api/js?key=' . $api_key . '&libraries=places';
+	  $api_script .= $securee.'://maps.googleapis.com/maps/api/js?key=' . $api_key . '&libraries=places&loading=async';
 	 //$api_script ='https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places';
 		  wp_enqueue_script( 'gpa-google-places-api', $api_script, array(), 'null', true );
 		
