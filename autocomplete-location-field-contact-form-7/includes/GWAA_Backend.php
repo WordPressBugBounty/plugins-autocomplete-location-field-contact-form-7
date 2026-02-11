@@ -8,7 +8,6 @@ class GWAA_Backend {
 	public function __construct () {
 		add_action('admin_menu', array($this,'GWAA_cf7_address_autocomplete_menu_item'));
 		add_action('admin_init', array($this,'GWAA_cf7_address_autocomplete_display_gpa_fields'));
-		add_action( 'wp_enqueue_scripts', array($this,'GWAA_cf7_gpa_load_user_api' ));
 	}
 	public function GWAA_cf7_address_autocomplete_menu_item()
 	{
@@ -183,26 +182,10 @@ class GWAA_Backend {
 	  
 	}
 	public function GWAA_sanitize_setting($value) {
-	    // Sanitize the setting value here
+	    if (is_array($value)) {
+	        return array_map('sanitize_text_field', $value);
+	    }
 	    return sanitize_text_field($value);
-	}
-	public function GWAA_cf7_gpa_load_user_api()
-	{
-	  $api_script ='';
-	  $gpa_page = get_option( 'gwaa_cf7_geo_gpa_page' );
-	  $api_key = get_option( 'gwaa_cf7_geo_api_key' );
-	  if(is_ssl())
-	  {
-			$securee = 'https';
-	  }
-	  else
-	  {
-			$securee = 'http';
-	  }
-	  $api_script .= $securee.'://maps.googleapis.com/maps/api/js?key=' . $api_key . '&libraries=places&loading=async';
-	 //$api_script ='https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places';
-		  wp_enqueue_script( 'gpa-google-places-api', $api_script, array(), 'null', true );
-		
 	}
 	
 	

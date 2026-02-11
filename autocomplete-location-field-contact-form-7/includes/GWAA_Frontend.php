@@ -21,11 +21,30 @@ class GWAA_Frontend {
 		$gpa_page = get_option( 'gwaa_cf7_geo_gpa_page' );
 		$gwaa_country_code = get_option( 'gwaa_country_code','' );
 		$gwaa_place_types = get_option( 'gwaa_place_types','' );
-		
+	    $api_key = get_option( 'gwaa_cf7_geo_api_key' );
+		if(is_ssl())
+	  {
+			$securee = 'https';
+	  }
+	  else
+	  {
+			$securee = 'http';
+	  }
+	  $api_script = $securee.'://maps.googleapis.com/maps/api/js?key=' . $api_key . '&libraries=places&loading=async';
 	?>
+	<script async defer src="<?php echo $api_script;?>"></script>
 <script>
-function initialize_gpa() {
-	
+function initialize_gpa(retries = 10) {
+	if (!window.google || !google.maps || !google.maps.places) {
+        if (retries > 0) {
+            console.warn("Google Maps API not loaded yet. Retrying...");
+            setTimeout(() => initialize_gpa(retries - 1), 500); // Retry after 500ms
+        } else {
+            console.error("Google Maps API failed to load after multiple attempts.");
+        }
+        return;
+    }
+     console.log("Google Maps API loaded successfully.");
 
 	var optionsc = {
 		<?php
@@ -54,7 +73,8 @@ function ApplyAutoComplete(input,optionsc) {
 		
 		var address2Field = document.querySelector("#"+autocomplete.inputName+"_address2");
 		var postalField = document.querySelector("#"+autocomplete.inputName+"_postcode");
-		
+		var latitudeField = document.querySelector("#" + autocomplete.inputName + "_latitude");
+    	var longitudeField = document.querySelector("#" + autocomplete.inputName + "_longitude");
 		
 		google.maps.event.addListener(autocomplete, 'place_changed', function () {
 			
@@ -62,6 +82,20 @@ function ApplyAutoComplete(input,optionsc) {
 			console.log(place);
 			let address1 = "";
 			let postcode = "";
+			let latitude = "";
+        	let longitude = "";
+        	if (place.geometry && place.geometry.location) {
+	            latitude = place.geometry.location.lat();
+	            longitude = place.geometry.location.lng();
+	            console.log("Latitude:", latitude, "Longitude:", longitude);
+
+	            if (latitudeField) {
+	                latitudeField.value = latitude;
+	            }
+	            if (longitudeField) {
+	                longitudeField.value = longitude;
+	            }
+	        }
 			console.log(autocomplete.inputName);
 			if(document.getElementById(autocomplete.inputName+"map")){
 				document.getElementById(autocomplete.inputName+"map").style.display = "block";
@@ -137,7 +171,12 @@ function ApplyAutoComplete(input,optionsc) {
 			}
 		});
 }
-window.addEventListener('load', initialize_gpa);
+setTimeout(() => initialize_gpa(), 1000);
+
+jQuery(window).on('elementor/popup/show', () => {
+    setTimeout(() => initialize_gpa(), 1000);
+});
+
 </script>
 	<?php 
 				
