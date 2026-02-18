@@ -1,65 +1,113 @@
-=== Autocomplete Location field Contact Form 7 ===
+=== Autocomplete Location Field for Contact Form 7 ===
+Tags: checkout-address-autocomplete, google-address-autocomplete, contact-form-7, autocomplete, contact-form-7-addon
+Requires at least: 5.8
+Contributors : themefunda
 Tested up to: 6.9
-Tags: Address AutoComplete ,google address, AutoComplete, Auto Complete Contact form 7
+Requires PHP: 7.2
+Stable tag: 4.0
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+Add Google Places Autocomplete address field to Contact Form 7. Enable automatic address suggestions using Google Maps API for faster and more accurate form submissions.
 
 == Description ==
 
-**Autocomplete Location field Contact Form 7** provide to text field in automatically suggestion of location. that location get by **google location in contact form 7**.
+**Autocomplete Location Field for Contact Form 7** allows you to add a Google Address Autocomplete field directly inside your Contact Form 7 forms.
 
-For you using this you need to setup google api key in setting that is simple setting
+This plugin integrates with the **Google Places API** to provide real-time address suggestions as users type. It improves user experience, reduces typing errors, and ensures accurate address data collection.
 
 [Pro Version](https://www.codesmade.com/store/autocomplete-location-field-contact-form-7-pro/) | [Support](https://www.codesmade.com/contact-us/) | [Google Place Key Documentation](https://www.codesmade.com/create-google-map-place-api-key/)
 
-Go to admin **Contact >> Google Place API** there is text field that field in you need to add key you can be [get api key](https://developers.google.com/maps/documentation/javascript/places-autocomplete#loading_the_library) from google location
 
-For adding **Autocomplete field in contact form 7** in contact form 7 there will be show tag **Field Autocomplete**.
+Perfect for:
+- Business contact forms
+- Delivery address forms
+- Booking forms
+- Service location forms
+- Real estate websites
+- Local business websites
 
-<h3>Features</h3>
-<ul>
-<li>Auto Complete Google Address</li>
-<li>Specific Country Address Show (US,AU) <strong>Pro</strong></li>
-<li>Enable Map <strong>Pro</strong></li>
-<li>Enable Address Field Option - Street Number,Postcode,Locality,State,Country <strong>Pro</strong></li>
-<li>Place Types (art_gallery) <strong>Pro</strong></li>
-<li>Translation Placeholder<strong>Pro</strong></li>
-</ul>
+== Key Benefits ==
 
-<h4>Our More Plugins</h4>
+✔ Improve form usability with address auto suggestions  
+✔ Reduce incorrect or incomplete address submissions  
+✔ Fast and responsive Google Places integration  
+✔ Easy setup with Google API Key  
+✔ Seamless integration with Contact Form 7  
 
-[Date Picker for Gravity Form](https://wordpress.org/plugins/date-picker-for-gravity-form/) plugin allows users to select dates easily, improving form usability and accuracy.
+== How It Works ==
 
-[Pixel Manager for Contact Form 7](https://wordpress.org/plugins/pixel-manager-for-contact-form-7/) This plugin integrates seamlessly, allowing you to add tracking pixels to your forms for precise analytics.
+1. Install and activate the plugin.
+2. Go to **Contact → Google Place API** in WordPress admin.
+3. Enter your Google API Key.
+4. Open your Contact Form 7 editor.
+5. Click on **Field Autocomplete** to insert the location field.
+6. Save your form and publish it.
 
-[Map Field For Contact Form 7](https://wordpress.org/plugins/map-field-for-contact-form-7/) Users can select locations easily, enhancing user engagement and data accuracy.
+You can generate your Google API Key from:
+https://developers.google.com/maps/documentation/javascript/places-autocomplete
 
-[Digital Signature for Wpforms](https://wordpress.org/plugins/digital-signature-for-wpforms/) allowing users to sign forms electronically. This plugin ensures secure and legally binding signatures, improving the professionalism of your forms.
+== Free Features ==
 
-[Autocomplete Location field Contact Form 7](https://wordpress.org/plugins/autocomplete-location-field-contact-form-7/) This plugin allows users to easily search and select locations, improving user experience and accuracy. 
+* Google Address Autocomplete
+* Works with Contact Form 7
+* Easy API Key setup
+* Lightweight and optimized
 
-[Date Picker For Contact Form 7](https://wordpress.org/plugins/date-picker-for-contact-form-7/) It simplifies date selection, enhancing user experience and ensuring accurate submissions.
+== Pro Features ==
 
-== Frequently Asked Questions ==  
+* Restrict autocomplete to specific countries (US, AU, etc.)
+* Enable Google Map display with selected location
+* Separate address components (Street, City, State, Country, Postcode)
+* Place type restriction (e.g., art_gallery, establishment, geocode)
+* Custom placeholder translation
+* Priority support
 
-### 1. Map not working 
-- Open the browser's Inspect Element tool, go to the Console tab, and check for any error messages.
+Upgrade to Pro:
+https://www.codesmade.com/store/autocomplete-location-field-contact-form-7-pro/
 
-### 2. How do I set up the Google API Key?
-- Go to **Contact >> Google Place API** in the WordPress admin panel.  
-- Enter your **Google API Key** in the provided field.  
-- You can generate an API Key from [Google's official documentation](https://developers.google.com/maps/documentation/javascript/places-autocomplete#loading_the_library).  
+== Frequently Asked Questions ==
 
-### 3. How do I add an autocomplete location field in Contact Form 7? 
-- Open your **Contact Form 7** form editor.  
-- Click on **Field Autocomplete** to insert the location field.  
-- Save the form and add it to your page using the shortcode.  
+= 1. The map or autocomplete is not working. What should I do? =
 
-### 4. Can I restrict autocomplete results to a specific country? 
-Yes, but this feature is available in the **Pro version**. You can restrict address suggestions to specific countries like **US, AU**, etc.  
+Open your browser's Inspect tool and check the Console tab for Google API errors. Make sure:
+- Your API key is correct
+- Places API is enabled
+- Billing is enabled in Google Cloud
 
-### 5. Does this plugin support Google Maps integration?
-Yes, Google Maps can be enabled in the **Pro version**, allowing users to view selected locations on a map.  
+= 2. How do I add the autocomplete field in Contact Form 7? =
 
-### 6. Where can I get support? 
-For support, visit our [support page](https://www.codesmade.com/contact-us/).
+Open your form editor and click **Field Autocomplete**. It will automatically insert the shortcode into your form.
+
+= 3. Can I limit results to a specific country? =
+
+Yes, this feature is available in the Pro version.
+
+= 4. Do I need a Google API key? =
+
+Yes. This plugin requires a Google Places API key to function.
+
+= 5. Where can I get support? =
+
+Support is available at:
+https://www.codesmade.com/contact-us/
+
+== Installation ==
+
+1. Upload the plugin folder to `/wp-content/plugins/`
+2. Activate the plugin from the WordPress Plugins menu
+3. Add your Google API key under **Contact → Google Place API**
+4. Add the Autocomplete field inside Contact Form 7
+
+== Screenshots ==
+
+1. Address Suggestions in Frontend Form
+2. Autocomplete Field in Contact Form 7 Editor
+3. Google API Key Settings Page
+
+== Changelog ==
+
+= 1.0.0 =
+- Initial release
+- Google Places Autocomplete integration
+- Contact Form 7 tag support

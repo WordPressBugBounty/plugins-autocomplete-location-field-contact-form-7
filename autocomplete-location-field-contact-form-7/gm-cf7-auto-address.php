@@ -1,9 +1,10 @@
 <?php
 /*
-Plugin Name: Autocomplete Location field Contact Form 7 
+Plugin Name: Autocomplete Location Field for Contact Form 7 
 description: Woo Customer auto fill fields in cf7
-Version: 3.0
+Version: 4.0
 Author: Gravity Master
+Requires Plugins: contact-form-7
 License: GPL2
 */
 
@@ -45,7 +46,7 @@ if (!function_exists('is_plugin_active')) {
 }
 
 if ( ( is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ) ) {
-   new GWAA_Backend();
-   new GWAA_Display();
-   new GWAA_Frontend();
+   new ACGWAA_Backend();
+   new ACGWAA_Display();
+   new ACGWAA_Frontend();
 }
