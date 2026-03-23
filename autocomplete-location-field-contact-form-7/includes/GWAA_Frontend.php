@@ -32,7 +32,7 @@ class GWAA_Frontend {
 	  }
 	  $api_script = $securee.'://maps.googleapis.com/maps/api/js?key=' . $api_key . '&libraries=places&loading=async';
 	?>
-	<script async defer src="<?php echo $api_script;?>"></script>
+	<script async defer src="<?php echo esc_url( $api_script );?>"></script>
 <script>
 function initialize_gpa(retries = 10) {
 	if (!window.google || !google.maps || !google.maps.places) {
@@ -49,13 +49,13 @@ function initialize_gpa(retries = 10) {
 	var optionsc = {
 		<?php
 		if($gwaa_country_code!=''){
-		  	echo "componentRestrictions: {country: ".json_encode(explode(",",$gwaa_country_code))."},";
+		  	echo "componentRestrictions: {country: " . wp_json_encode( explode( ",", $gwaa_country_code ) ) . "},";
 		  }
 
 		?>
 		<?php
 		if($gwaa_place_types!=''){
-		  	echo "types: ".json_encode(explode(",",$gwaa_place_types)).",";
+		  	echo "types: " . wp_json_encode( explode( ",", $gwaa_place_types ) ) . ",";
 
 		  }
 		?>

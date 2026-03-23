@@ -13,8 +13,8 @@ class GWAA_Backend {
 	{
 		add_submenu_page(
 											'wpcf7',
-											__('Google Place API','google-place-api'),
-											__('Google Place API','google-place-api'), 
+											__('Google Place API','autocomplete-location-field-contact-form-7'),
+											__('Google Place API','autocomplete-location-field-contact-form-7'), 
 											'manage_options',
 											'google-place-api',
 											array($this, 'GWAA_cf7_google_place_admin' ),
@@ -36,7 +36,7 @@ class GWAA_Backend {
 			<div class="about-text">
 		        <p>
 					Thank you for using our plugin! If you are satisfied, please reward it a full five-star <span style="color:#ffb900">★★★★★</span> rating.                        <br>
-		            <a href="https://wordpress.org/support/plugin/autocomplete-location-field-contact-form-7/reviews/?filter=5" target="_blank">Reviews</a>
+		            <a href="https://wordpress.org/support/plugin/autocomplete-location-field-contact-form-7/reviews/" target="_blank">Reviews</a>
 		            | <a href="https://www.codesmade.com/contact-us/" target="_blank">Support</a>
 		        </p>
 		    </div>
@@ -166,19 +166,18 @@ class GWAA_Backend {
 	{
 		
 			
-			register_setting('gwaa_section', 'gwaa_cf7_geo_api_key', array($this,'GWAA_sanitize_setting'));
-			register_setting('gwaa_section', 'gwaa_country_code');
-			register_setting('gwaa_section', 'gwaa_address_option');
-			register_setting('gwaa_section', 'gwaa_place_types');
-			register_setting('gwaa_section', 'gwaa_enable_map');
+			register_setting( 'gwaa_section', 'gwaa_cf7_geo_api_key', array( 'type' => 'string', 'sanitize_callback' => array( $this, 'GWAA_sanitize_setting' ) ) );
+			register_setting( 'gwaa_section', 'gwaa_country_code', array( 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ) );
+			register_setting( 'gwaa_section', 'gwaa_address_option', array( 'type' => 'array', 'sanitize_callback' => array( $this, 'GWAA_sanitize_setting' ) ) );
+			register_setting( 'gwaa_section', 'gwaa_place_types', array( 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ) );
+			register_setting( 'gwaa_section', 'gwaa_enable_map', array( 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ) );
 
-
-			register_setting('gwaa_section', 'gwaa_tr_enter_loc');
-			register_setting('gwaa_section', 'gwaa_tr_apartment');
-			register_setting('gwaa_section', 'gwaa_tr_city');
-			register_setting('gwaa_section', 'gwaa_tr_state');
-			register_setting('gwaa_section', 'gwaa_tr_postalcode');
-			register_setting('gwaa_section', 'gwaa_tr_country');
+			register_setting( 'gwaa_section', 'gwaa_tr_enter_loc', array( 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ) );
+			register_setting( 'gwaa_section', 'gwaa_tr_apartment', array( 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ) );
+			register_setting( 'gwaa_section', 'gwaa_tr_city', array( 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ) );
+			register_setting( 'gwaa_section', 'gwaa_tr_state', array( 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ) );
+			register_setting( 'gwaa_section', 'gwaa_tr_postalcode', array( 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ) );
+			register_setting( 'gwaa_section', 'gwaa_tr_country', array( 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ) );
 	  
 	}
 	public function GWAA_sanitize_setting($value) {

@@ -74,18 +74,19 @@ class GWAA_Display {
         ?>
       
         <div class="wpcf7-form-control-wrap-main <?php echo sanitize_html_class( $tag->name )?>">
-        	<span class="wpcf7-form-control-wrap" data-name="<?php echo $tag->name;?>">
-	        	<input <?php echo $atts;?> />
-	        	<?php echo $validation_error;?>
+        	<span class="wpcf7-form-control-wrap" data-name="<?php echo esc_attr( $tag->name );?>">
+	        	<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $atts is sanitized by wpcf7_format_atts()
+			?><input <?php echo $atts; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
+	        	<?php echo wp_kses_post( $validation_error );?>
 	        </span>
         	<?php
         	if (in_array("street_number", $gwaa_address_option)) {
         	?>
         	 <div class="full-field">
 		        <label>
-		        	<?php echo get_option('gwaa_tr_apartment')!=''?get_option('gwaa_tr_apartment'):'Apartment, unit, suite, or floor #';?>
+		        	<?php echo esc_html( get_option('gwaa_tr_apartment') != '' ? get_option('gwaa_tr_apartment') : 'Apartment, unit, suite, or floor #' );?>
 		        </label>
-		        <input id="<?php echo $tag->name;?>_address2" name="<?php echo $tag->name;?>_address2" />
+		        <input id="<?php echo esc_attr( $tag->name );?>_address2" name="<?php echo esc_attr( $tag->name );?>_address2" />
 		     </div>
 		    <?php 
 		 	}
@@ -95,9 +96,9 @@ class GWAA_Display {
         	?>
 		     <div class="full-field">
 		        <label>
-		        	<?php echo get_option('gwaa_tr_city')!=''?get_option('gwaa_tr_city'):'City';?>
+		        	<?php echo esc_html( get_option('gwaa_tr_city') != '' ? get_option('gwaa_tr_city') : 'City' );?>
 		        </label>
-		        <input id="<?php echo $tag->name;?>_locality" name="<?php echo $tag->name;?>_locality"  />
+		        <input id="<?php echo esc_attr( $tag->name );?>_locality" name="<?php echo esc_attr( $tag->name );?>_locality"  />
 		     </div>
 		    <?php 
 		 	}
@@ -107,9 +108,9 @@ class GWAA_Display {
         	?>
 		     <div class="slim-field-left">
 		        <label  class="form-label">
-		        	<?php echo get_option('gwaa_tr_state')!=''?get_option('gwaa_tr_state'):'State/Province';?>
+		        	<?php echo esc_html( get_option('gwaa_tr_state') != '' ? get_option('gwaa_tr_state') : 'State/Province' );?>
 		        </label>
-		        <input id="<?php echo $tag->name;?>_state" name="<?php echo $tag->name;?>_state"  />
+		        <input id="<?php echo esc_attr( $tag->name );?>_state" name="<?php echo esc_attr( $tag->name );?>_state"  />
 		     </div>
 		    <?php 
 		 	}
@@ -119,9 +120,9 @@ class GWAA_Display {
         	?>
 		     <div class="slim-field-right" >
 		        <label >
-			        <?php echo get_option('gwaa_tr_postalcode')!=''?get_option('gwaa_tr_postalcode'):'Postal code';?>
+			        <?php echo esc_html( get_option('gwaa_tr_postalcode') != '' ? get_option('gwaa_tr_postalcode') : 'Postal code' );?>
 			    </label>
-		        <input id="<?php echo $tag->name;?>_postcode" name="<?php echo $tag->name;?>_postcode"  />
+		        <input id="<?php echo esc_attr( $tag->name );?>_postcode" name="<?php echo esc_attr( $tag->name );?>_postcode"  />
 		     </div>
 		    <?php 
 		 	}
@@ -131,16 +132,16 @@ class GWAA_Display {
         	?>
 		     <div class="full-field">
 		        <label>
-		        <?php echo get_option('gwaa_tr_country')!=''?get_option('gwaa_tr_country'):'Country/Region';?>
+		        <?php echo esc_html( get_option('gwaa_tr_country') != '' ? get_option('gwaa_tr_country') : 'Country/Region' );?>
 		    </label>
-		        <input id="<?php echo $tag->name;?>_country" name="<?php echo $tag->name;?>_country"  />
+		        <input id="<?php echo esc_attr( $tag->name );?>_country" name="<?php echo esc_attr( $tag->name );?>_country"  />
 		     </div>
 		    <?php 
 		 	}
 		 	if ($gwaa_enable_map==true) {
 		 	?>
 		    <div class="full-field">
-		    	<div id="<?php echo $tag->name;?>map" class="gwaa_map"></div>
+		    	<div id="<?php echo esc_attr( $tag->name );?>map" class="gwaa_map"></div>
 		    </div>
 		    <?php
 			}
@@ -153,7 +154,7 @@ class GWAA_Display {
 	public function GWAA_add_products_tag_generator_menu()
 	{
 		$tag_generator = WPCF7_TagGenerator::get_instance();
-		$tag_generator->add( 'gmautocomplete', __( 'Field Autocomplete', 'gwaa' ),array($this, 'GWAA_wpcf7_tag_products_generator_menu') ,array('version'=>2));
+		$tag_generator->add( 'gmautocomplete', __( 'Field Autocomplete', 'autocomplete-location-field-contact-form-7' ),array($this, 'GWAA_wpcf7_tag_products_generator_menu') ,array('version'=>2));
 	}
 	function GWAA_wpcf7_tag_products_generator_menu( $contact_form, $args = '' ) {
 		$args = wp_parse_args( $args, array() );
@@ -166,7 +167,7 @@ class GWAA_Display {
 			<?php
 			if($gwaa_cf7_geo_api_key==''){
 			?>
-			<a href="<?php echo get_admin_url().'admin.php?page=google-place-api';?>" target="_blank" style="font-weight: bold;color: red;">Setup Google Places API Key </a>
+			<a href="<?php echo esc_url( get_admin_url() . 'admin.php?page=google-place-api' );?>" target="_blank" style="font-weight: bold;color: red;">Setup Google Places API Key </a>
 			<?php
 			}
 			?>
@@ -174,7 +175,7 @@ class GWAA_Display {
 		</header> 
 		<div class="control-box">
 			<fieldset>
-				<legend><?php echo esc_html( __( 'Field type', 'contact-form-7' ) ); ?></legend>
+				<legend><?php echo esc_html( __( 'Field type', 'autocomplete-location-field-contact-form-7' ) ); ?></legend>
 				<input type="hidden" data-tag-part="basetype" value="gmautocomplete" >
 				<label>
 				<input type="checkbox" data-tag-part="type-suffix" value="*">This is a required field.
@@ -201,7 +202,7 @@ class GWAA_Display {
 				</div>
 	    	</div/>
 			<p class="mail-tag-tip">
-				<label for="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>"><?php echo sprintf( esc_html( __( "To use the value input through this field in a mail field, you need to insert the corresponding mail-tag (%s) into the field on the Mail tab.", 'calculation-for-contact-form-7' ) ), '<strong><span class="mail-tag"></span></strong>' ); ?>
+				<label for="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>"><?php echo sprintf( esc_html( __( "To use the value input through this field in a mail field, you need to insert the corresponding mail-tag (%s) into the field on the Mail tab.", 'autocomplete-location-field-contact-form-7' ) ), '<strong><span class="mail-tag"></span></strong>' ); ?>
 			    </label>
 			</p>
 		</div>
