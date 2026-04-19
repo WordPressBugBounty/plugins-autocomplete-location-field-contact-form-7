@@ -11,6 +11,8 @@ class ACGWAA_Display {
 		add_action( 'admin_init', array($this, 'GWAA_add_products_tag_generator_menu'));
 		add_action( 'wpcf7_validate_gmautocomplete', array($this, 'GWAA_products_validation_filter'), 10, 2 );
 		add_action( 'wpcf7_validate_gmautocomplete*', array($this, 'GWAA_products_validation_filter'), 10, 2 );
+		// Support special mail-tags like [field-postalcode] or [field-postcode]
+		add_filter( 'wpcf7_special_mail_tags', array( $this, 'gwaa_special_mail_tags' ), 10, 3 );
 	}
 	
 	public function GWAA_cf7_autocomplete_add_tag_generator()
@@ -75,9 +77,14 @@ class ACGWAA_Display {
       
         <div class="wpcf7-form-control-wrap-main <?php echo esc_attr( sanitize_html_class( $tag->name ) ); ?>">
 			<span class="wpcf7-form-control-wrap" data-name="<?php echo esc_attr( $tag->name ); ?>">
-				<input <?php echo wp_kses_post( $atts ); ?> />
-				<?php echo wp_kses_post( $validation_error ); ?>
-			</span>
+    <div id="<?php echo esc_attr( $tag->name ); ?>_autocomplete_wrapper"></div>
+    <input 
+        <?php echo wp_kses_post( $atts ); ?>
+        style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;border:0;padding:0;"
+        autocomplete="off"
+    />
+    <?php echo wp_kses_post( $validation_error ); ?>
+</span>
 
 			<?php if ( in_array( 'street_number', $gwaa_address_option, true ) ) : ?>
 				<div class="full-field">
@@ -231,7 +238,7 @@ class ACGWAA_Display {
 			</fieldset>
 			<fieldset>
 				<legend>Id</legend>
-				<input type="text" data-tag-part="option" data-tag-option="id:" pattern="[A-Za-z][A-Za-z0-9_\-]*">
+				<input type="text" data-tag-part="option" data-tag-option="id:" pattern="[A-Za-z][A-ZaZ0-9_\-]*">
 			</fieldset>
 			<fieldset>
 				<legend>Class</legend>
@@ -266,5 +273,26 @@ class ACGWAA_Display {
 	    return $result;
 	}
 	
-	
+	/**
+	 * Handle special mail-tags for address components retrieval.
+	 * Supported mail-tags (both hyphen and underscore separators):
+	 *   [field-address2] or [field_address2]    -> {field}_address2
+	 *   [field-locality] or [field_locality]    -> {field}_locality
+	 *   [field-state] or [field_state]          -> {field}_state
+	 *   [field-postcode] or [field_postcode]    -> {field}_postcode
+	 *   [field-country] or [field_country]      -> {field}_country
+	 */
+	public function gwaa_special_mail_tags( $output, $name, $html = false ) {
+		if ( preg_match( '/^(.+)[-_](address2|locality|state|postcode|country)$/', $name, $m ) ) {
+			$base = $m[1];
+			$component = $m[2];
+			$field = $base . '_' . $component; // inputs are named like {tagname}_postcode
+			if ( isset( $_POST[ $field ] ) ) {
+				return sanitize_text_field( wp_unslash( $_POST[ $field ] ) );
+			}
+			return '';
+		}
+
+		return $output;
+	}
 }

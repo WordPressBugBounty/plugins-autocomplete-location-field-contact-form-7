@@ -30,153 +30,163 @@ class ACGWAA_Frontend {
 	  {
 			$securee = 'http';
 	  }
-	  $api_script = $securee.'://maps.googleapis.com/maps/api/js?key=' . rawurlencode($api_key) . '&libraries=places&loading=async';
+	  $api_script = $securee.'://maps.googleapis.com/maps/api/js?key=' . rawurlencode($api_key) . '&v=beta&libraries=places&loading=async';
 	?>
 	<script async defer src="<?php echo esc_url( $api_script );?>"></script>
 <script>
-function initialize_gpa(retries = 10) {
-	if (!window.google || !google.maps || !google.maps.places) {
-        if (retries > 0) {
-            console.warn("Google Maps API not loaded yet. Retrying...");
-            setTimeout(() => initialize_gpa(retries - 1), 500); // Retry after 500ms
-        } else {
-            console.error("Google Maps API failed to load after multiple attempts.");
+(function() {
+    function initializePlaceAutocomplete(retries = 10) {
+        if ( ! window.google || ! google.maps || ! google.maps.places || ! google.maps.places.PlaceAutocompleteElement ) {
+            if ( retries > 0 ) {
+                console.warn('Google Maps Places API not ready. Retrying...');
+                setTimeout(() => initializePlaceAutocomplete(retries - 1), 500);
+            } else {
+                console.error('Google Maps Places API failed to load.');
+            }
+            return;
         }
-        return;
+        console.log('Google Maps PlaceAutocompleteElement ready.');
+
+        var hiddenInputs = document.querySelectorAll('input.wpcf7-gmautocomplete');
+        hiddenInputs.forEach(function(hiddenInput) {
+            applyPlaceAutocomplete(hiddenInput);
+        });
     }
-     console.log("Google Maps API loaded successfully.");
 
-	var optionsc = {
-		<?php
-		if($gwaa_country_code!=''){
-		  	echo "componentRestrictions: {country: ".wp_json_encode(explode(",",$gwaa_country_code))."},";
-		  }
+    function applyPlaceAutocomplete(hiddenInput) {
+        var name    = hiddenInput.name;
+        var wrapper = document.getElementById(name + '_autocomplete_wrapper');
+        if ( ! wrapper ) return;
+        if ( wrapper.dataset.initialized ) return;
+        wrapper.dataset.initialized = 'true';
 
-		?>
-		<?php
-		if($gwaa_place_types!=''){
-		  	echo "types: ".wp_json_encode(explode(",",$gwaa_place_types)).",";
+        var elementOptions = {};
+        <?php if ( $gwaa_country_code !== '' ) : ?>
+        elementOptions.includedRegionCodes = <?php echo wp_json_encode( explode( ',', $gwaa_country_code ) ); ?>;
+        <?php endif; ?>
+        <?php if ( $gwaa_place_types !== '' ) : ?>
+        elementOptions.includedPrimaryTypes = <?php echo wp_json_encode( explode( ',', $gwaa_place_types ) ); ?>;
+        <?php endif; ?>
 
-		  }
-		?>
-	};
-    var acInputs = document.getElementsByClassName("wpcf7-gmautocomplete");
-	for (var i = 0; i < acInputs.length; i++) {
-		ApplyAutoComplete(acInputs[i],optionsc)
-	}
+        var placeElement = new google.maps.places.PlaceAutocompleteElement(elementOptions);
+        placeElement.style.width   = '100%';
+        placeElement.style.display = 'block';
 
-}
-function ApplyAutoComplete(input,optionsc) {
-		var autocomplete = new google.maps.places.Autocomplete(input,optionsc);
-		autocomplete.inputId = input.id;
-		autocomplete.inputName = input.name;
-		
-		var address2Field = document.querySelector("#"+autocomplete.inputName+"_address2");
-		var postalField = document.querySelector("#"+autocomplete.inputName+"_postcode");
-		var latitudeField = document.querySelector("#" + autocomplete.inputName + "_latitude");
-    	var longitudeField = document.querySelector("#" + autocomplete.inputName + "_longitude");
-		
-		google.maps.event.addListener(autocomplete, 'place_changed', function () {
-			
-			const place = autocomplete.getPlace();
-			console.log(place);
-			let address1 = "";
-			let postcode = "";
-			let latitude = "";
-        	let longitude = "";
-        	if (place.geometry && place.geometry.location) {
-	            latitude = place.geometry.location.lat();
-	            longitude = place.geometry.location.lng();
-	            console.log("Latitude:", latitude, "Longitude:", longitude);
+        wrapper.appendChild(placeElement);
 
-	            if (latitudeField) {
-	                latitudeField.value = latitude;
-	            }
-	            if (longitudeField) {
-	                longitudeField.value = longitude;
-	            }
-	        }
-			console.log(autocomplete.inputName);
-			if(document.getElementById(autocomplete.inputName+"map")){
-				document.getElementById(autocomplete.inputName+"map").style.display = "block";
-				const myLatLng = { lat: -25.363, lng: 131.044 };
-				const map = new google.maps.Map(document.getElementById(autocomplete.inputName+"map"), {
-					zoom: 4,
-					center: myLatLng,
-					mapTypeControl: false,
-				});
-				const marker = new google.maps.Marker({
-					position: myLatLng,
-					map,
-				});
-				marker.setVisible(false);
-				if (place.geometry.viewport) {
-					map.fitBounds(place.geometry.viewport);
-				} else {
-					map.setCenter(place.geometry.location);
-					map.setZoom(17);
-				}
-				marker.setPosition(place.geometry.location);
-				marker.setVisible(true);
-			}
-			
-			for (const component of place.address_components) {
-			    const componentType = component.types[0];
+        // Clear hidden input when user clears the field
+        placeElement.addEventListener('gmp-placeclear', function() {
+            hiddenInput.value = '';
+        });
 
-			    switch (componentType) {
-			      case "street_number": {
-			        address1 = `${component.long_name} ${address1}`;
-			        break;
-			      }
+        placeElement.addEventListener('gmp-select', async function(event) {
+            var placePrediction = event.placePrediction;
+            var place = placePrediction.toPlace();
 
-			      case "route": {
-			        address1 += component.short_name;
-			        break;
-			      }
+            // ✅ 'geometry' removed — use 'location' instead
+            await place.fetchFields({
+                fields: ['addressComponents', 'formattedAddress', 'location', 'displayName']
+            });
 
-			      case "postal_code": {
-			        postcode = `${component.long_name}${postcode}`;
-			        break;
-			      }
+            console.log('gmp-select fired');
+            console.log('formattedAddress:', place.formattedAddress);
 
-			      case "postal_code_suffix": {
-			        postcode = `${postcode}-${component.long_name}`;
-			        break;
-			      }
-			      case "locality":
-			      	if(document.getElementById(autocomplete.inputName+"_locality")){
-			      		document.querySelector("#"+autocomplete.inputName+"_locality").value = component.long_name;
-			      	}
-			        
-			        break;
-			      case "administrative_area_level_1": {
-			      	if(document.getElementById(autocomplete.inputName+"_state")){
-				        document.querySelector("#"+autocomplete.inputName+"_state").value = component.short_name;
-				    }
-			        break;
-			      }
-			      case "country":
-			      	if(document.getElementById(autocomplete.inputName+"_country")){
-			        	document.querySelector("#"+autocomplete.inputName+"_country").value = component.long_name;
-			    	}
-			        break;
-			    }
-			}
-			if(document.getElementById(autocomplete.inputName+"_address2")){
-				address2Field.value = address1;
-			}
-			console.log(autocomplete.inputName);
-			if(document.getElementById(autocomplete.inputName+"_postcode")){
-				postalField.value = postcode;
-			}
-		});
-}
-setTimeout(() => initialize_gpa(), 1000);
+            var address1 = '';
+            var postcode = '';
+            var locality = '';
+            var state    = '';
+            var country  = '';
 
-jQuery(window).on('elementor/popup/show', () => {
-    setTimeout(() => initialize_gpa(), 1000);
-});
+            if ( place.addressComponents ) {
+                for ( var component of place.addressComponents ) {
+                    var type = component.types[0];
+                    switch ( type ) {
+                        case 'street_number':
+                            address1 = component.longText + ' ' + address1;
+                            break;
+                        case 'route':
+                            address1 += component.shortText;
+                            break;
+                        case 'postal_code':
+                            postcode = component.longText + postcode;
+                            break;
+                        case 'postal_code_suffix':
+                            postcode = postcode + '-' + component.longText;
+                            break;
+                        case 'locality':
+                            locality = component.longText;
+                            var localityEl = document.getElementById(name + '_locality');
+                            if ( localityEl ) localityEl.value = component.longText;
+                            break;
+                        case 'administrative_area_level_1':
+                            state = component.shortText;
+                            var stateEl = document.getElementById(name + '_state');
+                            if ( stateEl ) stateEl.value = component.shortText;
+                            break;
+                        case 'country':
+                            country = component.longText;
+                            var countryEl = document.getElementById(name + '_country');
+                            if ( countryEl ) countryEl.value = component.longText;
+                            break;
+                    }
+                }
+            }
 
+            // Populate sub-fields
+            var address2El = document.getElementById(name + '_address2');
+            if ( address2El ) address2El.value = address1;
+
+            var postcodeEl = document.getElementById(name + '_postcode');
+            if ( postcodeEl ) postcodeEl.value = postcode;
+
+            // Build full address from parts as fallback
+            var addressParts = [];
+            if ( address1 ) addressParts.push(address1);
+            if ( locality )  addressParts.push(locality);
+            if ( state )     addressParts.push(state);
+            if ( postcode )  addressParts.push(postcode);
+            if ( country )   addressParts.push(country);
+
+            var fullAddress = ( place.formattedAddress && place.formattedAddress.trim() !== '' )
+                ? place.formattedAddress
+                : addressParts.join(', ');
+
+            // Set value and force CF7 to detect it
+            hiddenInput.value = fullAddress;
+            hiddenInput.setAttribute('value', fullAddress);
+            hiddenInput.dispatchEvent(new Event('input',  { bubbles: true }));
+            hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+            console.log('Hidden input [' + name + '] set to:', hiddenInput.value);
+
+            // ✅ Lat/Lng — use place.location (not place.geometry.location)
+            var latField = document.getElementById(name + '_latitude');
+            var lngField = document.getElementById(name + '_longitude');
+            if ( place.location ) {
+                if ( latField ) latField.value = place.location.lat();
+                if ( lngField ) lngField.value = place.location.lng();
+            }
+
+            // Map
+            var mapEl = document.getElementById(name + 'map');
+            if ( mapEl && place.location ) {
+                mapEl.style.display = 'block';
+                var map = new google.maps.Map(mapEl, {
+                    zoom: 17,
+                    center: place.location,
+                    mapTypeControl: false,
+                });
+                new google.maps.Marker({ position: place.location, map: map });
+            }
+        });
+    }
+
+    setTimeout(() => initializePlaceAutocomplete(), 1000);
+
+    jQuery(window).on('elementor/popup/show', function() {
+        setTimeout(() => initializePlaceAutocomplete(), 1000);
+    });
+})();
 </script>
 	<?php 
 			

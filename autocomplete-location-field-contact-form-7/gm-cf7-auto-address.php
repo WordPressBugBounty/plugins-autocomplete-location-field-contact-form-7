@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Autocomplete Location Field for Contact Form 7
-description: Woo Customer auto fill fields in Contact Form 7
-Version: 7.0
+Plugin Name: Autocomplete Location Field for Contact Form 7 
+description: Woo Customer auto fill fields in cf7
+Version: 10.0
 Author: Gravity Master
-License: GPL2
 Requires Plugins: contact-form-7
+License: GPL2
 */
 
 /* Stop immediately if accessed directly. */
@@ -46,7 +46,23 @@ if (!function_exists('is_plugin_active')) {
 }
 
 if ( ( is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ) ) {
-   new GWAA_Backend();
-   new GWAA_Display();
-   new GWAA_Frontend();
+   new ACGWAA_Backend();
+   new ACGWAA_Display();
+   new ACGWAA_Frontend();
+}
+add_filter( 'plugin_action_links_' . GWAA_PLUGIN_BASENAME, 'gwaa_plugin_action_links' );
+function gwaa_plugin_action_links( $links ) {
+   $support_url = 'https://www.codesmade.com/contact-us/';
+   $docs_url    = 'https://www.codesmade.com/store/autocomplete-location-field-contact-form-7-pro/';
+   $pro_url     = 'https://www.codesmade.com/create-google-map-place-api-key/';
+   $support_link = '<a href="' . esc_url( $support_url ) . '" target="_blank" rel="noopener">Support</a>';
+   $docs_link    = '<a href="' . esc_url( $docs_url ) . '" target="_blank" rel="noopener">Docs</a>';
+   $pro_link     = '<a href="' . esc_url( $pro_url ) . '" target="_blank" rel="noopener">Get Pro Version</a>';
+	$settings_url  = admin_url( 'admin.php?page=autocomplete-location-field-contact-form-7' );
+	$settings_link = '<a href="' . esc_url( $settings_url ) . '">Settings</a>';
+	array_unshift( $links, $support_link );
+	array_unshift( $links, $docs_link );
+   array_unshift( $links, $pro_link );
+	array_unshift( $links, $settings_link );
+   return $links;
 }
