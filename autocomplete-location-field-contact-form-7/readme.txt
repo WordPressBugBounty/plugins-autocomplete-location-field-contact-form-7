@@ -2,7 +2,7 @@
 Contributors: gravitymaster97
 Tags: google address autocomplete, contact form 7 addon, autocomplete, contact form 7, map
 Requires at least: 5.8
-Tested up to: 6.9.1
+Tested up to: 7.0
 Requires PHP: 7.2
 Stable tag: 4.0
 License: GPLv2 or later
